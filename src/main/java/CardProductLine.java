@@ -1,3 +1,3 @@
 public enum CardProductLine {
-    MAGIC, POKEMON
+    MAGIC, POKEMON, YUGIOH, CARDFIGHT
 }
