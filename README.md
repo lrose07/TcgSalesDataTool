@@ -1,0 +1,1 @@
+To develop locally, make sure your AWS credentials are configured on your local machine and an IAM role has been set that allows the tcg secrets to be obtained.
