@@ -12,6 +12,11 @@ public class AnalysisToolDriver {
 
     public static void main(String... args) {
 
+        SeleniumUtilities.pullOrderSlips();
+        AwsUtilities.connectToS3();
+
+        System.exit(0);
+
         List<TradingCardRecord> tradingCardsOrdered = new ArrayList<>();
 
         File inputDir = new File("src/main/resources/ordersToProcess");
