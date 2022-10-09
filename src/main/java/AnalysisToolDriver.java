@@ -15,6 +15,7 @@ public class AnalysisToolDriver {
         SeleniumUtilities.pullOrderSlips();
         AwsUtilities.connectToS3();
 
+        // Exiting here while building Selenium and S3 parts
         System.exit(0);
 
         List<TradingCardRecord> tradingCardsOrdered = new ArrayList<>();

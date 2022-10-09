@@ -67,27 +67,27 @@ public final class PdfUtilities {
             str = fixLineMissingSpaces(str);
         }
 
-        String[] cardDetailsArr;
+        String[] cardDetails;
 
         if (str.contains(" SM - ")) {
-            cardDetailsArr = str.replace(" SM -", "").split(" - ");
+            cardDetails = str.replace(" SM -", "").split(" - ");
         } else if (str.contains(" XY - ")) {
-            cardDetailsArr = str.replace(" XY -", "").split(" - ");
+            cardDetails = str.replace(" XY -", "").split(" - ");
         } else {
-            cardDetailsArr = str.split(" - ");
+            cardDetails = str.split(" - ");
         }
 
-        String[] quantityAndProductLine = cardDetailsArr[0].split(" ");
+        String[] quantityAndProductLine = cardDetails[0].split(" ");
 
         int cardQuantity = Integer.parseInt(quantityAndProductLine[0]);
         String cardProductLineString = quantityAndProductLine[1];
 
-        String setAndCardName = cardDetailsArr[1];
+        String setAndCardName = cardDetails[1];
 
         String setName = setAndCardName.substring(0, setAndCardName.lastIndexOf(":"));
         String cardName = setAndCardName.substring(setAndCardName.lastIndexOf(":") + 2);
 
-        String priceAndQualityString = cardDetailsArr[cardDetailsArr.length - 1];
+        String priceAndQualityString = cardDetails[cardDetails.length - 1];
         String priceString = priceAndQualityString.substring(priceAndQualityString.lastIndexOf("$")).replace("$", "USD ");
         Money price = Money.parse(priceString);
 

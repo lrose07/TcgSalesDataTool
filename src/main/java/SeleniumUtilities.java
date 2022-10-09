@@ -48,6 +48,8 @@ public final class SeleniumUtilities {
         // option: hold a file in s3 with the timestamp of the last order number pull, only pull orders
         // from that timestamp forward
         // option: daily lambda runs at midnight, pulls orders from previous day
+
+        driver.quit();
     }
 
     private static void login() {
@@ -55,11 +57,11 @@ public final class SeleniumUtilities {
         WebElement passwordInput = driver.findElement(By.name("Password"));
         WebElement logonButton = driver.findElement(By.id("logonButton"));
 
+        // should prob put these in a prop file maybe?
         usernameInput.sendKeys("laurenarose07@gmail.com");
         String secretNameArn = "arn:aws:secretsmanager:us-east-1:643878261543:secret:tcgPlayerPassword-HQ3PU5";
         String secretName = "tcgPlayerPassword";
         String password = AwsUtilities.getRequestedSecretValue(secretName, secretNameArn);
-        System.out.println("Password: " + password);
         passwordInput.sendKeys(password);
         logonButton.click();
 
