@@ -1,25 +1,21 @@
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.Bucket;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
-import software.amazon.awssdk.services.secretsmanager.model.*;
+import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueRequest;
+import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueResponse;
+import software.amazon.awssdk.services.secretsmanager.model.SecretsManagerException;
 
 import java.lang.reflect.Type;
-import java.util.Arrays;
-import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
 public final class AwsUtilities {
 
-    private static AmazonS3 s3Client;
     private static String requestedSecretValue;
 
     private AwsUtilities() {
@@ -27,12 +23,12 @@ public final class AwsUtilities {
     }
 
     static void connectToS3() {
-        s3Client = AmazonS3ClientBuilder.standard()
+        AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
                 .withRegion(Regions.US_EAST_1)
                 .build();
 
         List<Bucket> buckets = s3Client.listBuckets();
-        for(Bucket bucket : buckets) {
+        for (Bucket bucket : buckets) {
             System.out.println(bucket.getName());
         }
     }
@@ -67,7 +63,8 @@ public final class AwsUtilities {
     private static String getSecretFromJsonResponse(String jsonString, String secretName) {
         System.out.println("getting secret from JSON...");
         Gson gson = new Gson();
-        Type secretResponseType = new TypeToken<Map<String, String>>() {}.getType();
+        Type secretResponseType = new TypeToken<Map<String, String>>() {
+        }.getType();
         Map<String, String> secretData = gson.fromJson(jsonString, secretResponseType);
         return secretData.get(secretName);
     }
