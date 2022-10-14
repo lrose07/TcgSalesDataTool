@@ -44,7 +44,6 @@ public final class AwsUtilities {
                 .build();
 
         try {
-            System.out.println("in try block to get secret");
             GetSecretValueRequest valueRequest = GetSecretValueRequest.builder()
                     .secretId(secretNameArn)
                     .build();

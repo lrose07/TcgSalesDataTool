@@ -5,6 +5,16 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import static io.github.bonigarcia.wdm.config.DriverManagerType.CHROME;
 
 public final class SeleniumUtilities {
@@ -13,6 +23,15 @@ public final class SeleniumUtilities {
 
     private static void establishBrowserInstance() {
         WebDriverManager.getInstance(CHROME).setup();
+
+        Map<String,Object> preferences= new HashMap<>();
+        preferences.put("profile.default_content_settings.popups", 0);
+        preferences.put("download.default_directory",
+                System.getProperty("user.dir") + File.separator
+                + "src" + File.separator
+                + "main" + File.separator
+                + "resources" + File.separator
+                + "orderSlipDownloads");
 
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--window-size=1920,1080");
@@ -24,6 +43,8 @@ public final class SeleniumUtilities {
         options.addArguments("--disable-dev-shm-usage");
         options.addArguments("--no-sandbox");
         options.addArguments("--ignore-certificate-errors");
+
+        options.setExperimentalOption("prefs", preferences);
 
         driver = new ChromeDriver(options);
     }
@@ -40,9 +61,11 @@ public final class SeleniumUtilities {
             login();
         }
 
-        // get file with order numbers
-        // for each order number, go to URL: https://store.tcgplayer.com/admin/orders/manageorder/{order_number}
-        downloadOrderSlip();
+        List<String> orderNumbers = getOrderNumbersToProcess();
+
+        for (String s : orderNumbers) {
+            downloadOrderSlip(s);
+        }
 
         // need to figure out the best way to keep track of which order numbers have been processed already
         // option: hold a file in s3 with the timestamp of the last order number pull, only pull orders
@@ -70,9 +93,20 @@ public final class SeleniumUtilities {
         }
     }
 
-    private static void downloadOrderSlip() {
-        // find download order slip button element
-        // download to local?? -> upload to s3. Is there a way to go direct to s3?
-        System.out.println("To be implemented still");
+    private static List<String> getOrderNumbersToProcess() {
+        Path orderNumbersFile = Paths.get("src/main/resources/order_numbers.txt");
+        try {
+            return Files.readAllLines(orderNumbersFile);
+        } catch (IOException e) {
+            System.out.println("File issue");
+        }
+        return new ArrayList<>();
+    }
+
+    private static void downloadOrderSlip(String orderNumber) {
+        driver.get("https://store.tcgplayer.com/admin/orders/manageorder/" + orderNumber);
+
+        WebElement downloadButton = driver.findElement(By.xpath("//*[@id=\"rightSide\"]/div/div[4]/div[2]/div[1]/div[1]/div[1]/div[2]/div[2]/div[1]/ul/li/a"));
+        downloadButton.click();
     }
 }
